@@ -1,0 +1,80 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+bool RadixChecker(string& number, unsigned short& radix)
+{
+	if (radix > 10)
+	{
+		for (short index = 0; index < number.size(); index++)
+			if (number[index] > radix + 55)
+				return false;
+	}
+	else
+	{
+		for (short index = 0; index < number.size(); index++)
+			if (number[index] > radix - 1 + '0')
+				return false;
+	}
+	return true;
+}
+unsigned long long ToDecimal (string& number, unsigned short &radix)
+{
+	unsigned long long sum = 0;
+	for (short i = 0; i < number.size(); i++)
+		sum += isalpha(number[i]) ? unsigned long long(number[i] - 55) * pow(radix, number.size() - 1 - i) : unsigned long long(number[i] - '0') * pow(radix, number.size() - 1 - i);
+	return sum;
+}
+string FromDecimal(unsigned long long number, unsigned short& cradix)
+{
+	string result;
+	for (short i = 0; number != 0; i++, number /= cradix)
+		if (number % cradix < 10)
+			result.insert(result.end() - i, number % cradix + '0');
+		else
+			result.insert(result.end() - i, number % cradix + 55);
+	return result;
+}
+
+void main()
+{
+	bool approval = true;
+	while (approval)
+	{
+		cout << "Welcome to your Numbering Systems Converter !\nPlease enter your number here : ";
+		string number;
+		unsigned short radix, cradix;
+		cin >> number;
+		cout << "Enter The Base of this Number : ";
+		cin >> radix;
+
+		if (RadixChecker(number, radix))
+		{
+			while (approval)
+			{
+				cout << "Please Enter The Base you want to convert : ";
+				cin >> cradix;
+				if (radix == cradix)
+				{
+					cout << "\aInsertion Failed , You have inputted \"The Same\" Base of that Number !\nPlaese Try again with different Base !" << endl;
+					continue;
+				}
+				else
+					break;
+			}
+		}
+		else
+		{
+			cout << "\aInsertion Failed , You have inputted \"Incorrect\" Base for your Number !\nPlease try again with \"Correct\" Base !" << endl;
+			continue;
+		}
+		if (cradix == 10)
+			cout << "The Number ( " << number << " ) in base ( " << radix << " ) Equals ( " << ToDecimal(number, radix) << " ) in Base ( 10 ) !" << endl;
+		else
+			cout << "The Number ( " << number << " ) in base ( " << radix << " ) Equals ( " << FromDecimal(ToDecimal(number, radix),cradix) << " ) in Base ( " << cradix << " ) !" << endl;
+
+		cout << "Do you want to try again ?\nEnter ( 1 ) if \"Yes\" !\nEnter ( 0 ) if \"No\" !\nYour choice : ";
+		cin >> approval;
+	}
+	cout << "Thanks So much ! Have a Nice Day :) ";
+}
